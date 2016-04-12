@@ -1,0 +1,6 @@
+setpath SampleSetpathProg/
+./testprogsp 5 1
+./testprogsp 5 2
+./testprogsp 5 3
+./testprogsp 5 4
+./testprogsp 5 5

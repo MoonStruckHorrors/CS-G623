@@ -1,0 +1,5 @@
+./testprog 1 1
+./testprog 1 2
+./testprog 1 3
+./testprog 1 4
+./testprog 1 5

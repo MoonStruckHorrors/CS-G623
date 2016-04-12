@@ -1,0 +1,6 @@
+setpath /bin/
+echo 8 1
+echo 8 2
+echo 8 3
+echo 8 4
+echo 8 5

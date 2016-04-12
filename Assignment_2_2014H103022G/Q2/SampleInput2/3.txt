@@ -1,0 +1,4 @@
+setpath /bin/
+echo 4 1
+echo 4 2
+echo 4 3

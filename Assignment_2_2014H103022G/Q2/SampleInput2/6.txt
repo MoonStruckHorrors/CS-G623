@@ -1,0 +1,6 @@
+setpath /bin/
+echo 7 1
+echo 7 2
+echo 7 3
+echo 7 4
+echo 7 5

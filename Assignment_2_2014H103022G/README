@@ -1,0 +1,137 @@
+Nikhil Vyas (2014H103022G) (h2014022@goa.bits-pilani.ac.in)
+
+Assignment 2, Advanced Operating Systems (CS G623)
+
+==================================================================================================================
+================================================Question 1========================================================
+==================================================================================================================
+
+
+
+==================USAGE========================
+
+1) Compilation: make OR g++ soln.cpp -o prog
+2) Execution: ./prog <max_lvl> <max_children(per node)>
+
+					OR
+					
+   Use test.sh; ./test.sh
+
+=============Program Structure=================
+
+1) Initialize the shared varialbe to store the root pid_t
+2) Create a new ctree, t.
+3) Calculate total nodes & nodes per level in calc_nodes().
+3) Populate the tree with placeholder values(0..tot_nodes) with crt_tree().
+4) Using fork_rec(node*), traverse the tree & call fork() recursively.
+5) Write the process pid along with their ppid to temp.txt as they are created. <pid>|<ppid>
+6) Print the exit status of the children using waitpid().
+7) Read the file to load the values into the actual data structure.
+8) Print the tree using print_tree()
+9) Print the pre-order traversel using pre_order_rec()
+
+Details:
+
+class node == > Self pid, node* parent, vector<node*> children.
+
+class ctree ==> node* root, vector< vector<node*> > v2 (Stores all the levels as vector<node*>), vector<int> n_lvl (Stores number of nodes at ith level)
+
+ctree::crt_tree() - Creates the tree with placeholder values.
+ctree::fork_rec() - Forks processes recursively using the already known tree links. Stores pid in temp.txt
+ctree::read_from_file() - Stores actual pid value in the data structure using temp.txt
+
+===============Files & Sub-directories for Question 1=================
+
+soln.cpp
+	--The main program, source.
+
+test.sh
+	--Script with make & execution with some user input.
+	--Usage ./test.sh(needs +x)
+
+temp.txt
+	--Holds the pids & ppids or the processes created
+
+makefile
+	--makefile
+	
+===================KNOWN Bugs/Limitations================================
+
+1) Max_Child should be atleast 2 (fibonacci for 2 -> 3 won't work).
+2) Sometimes the last node creation procedure is out of sync for max_child=2, resulting in slightly faulty pre-order traversel.
+3) Over-compicated & cluttered code.
+
+
+
+
+==================================================================================================================
+================================================Question 2========================================================
+==================================================================================================================
+
+
+
+==================USAGE========================
+
+1) Compilation: make OR g++ soln.cpp -o prog
+2) Execution: ./prog <file1> <file2> ... <fileN>
+
+					OR
+
+   Use test.sh; ./test.sh
+
+=============Program Structure=================
+
+Rough logic:
+
+1) Store the file names in the string array fnames[]
+
+2) Read all the files using the function read_file(string, string&) & store the contents in the string array ftext[]. Setpath checks are also done in read_file().
+
+3) Fork n processes using the function init_fork(pid_t&, string); Send ftext[i] to ith process & store pids in
+   vector<pid_t> proc_v.
+   
+4) In init_fork(), after calling fork, while(1) is executed with SIGSTOP after every iteration.
+
+5) Using the pid_t vector, processes are sent SIGCONT in following order: 1, 4, 7(batches of three), until the batch has no more lines left to read.
+
+6) On receiving SIGCONT, init_fork() reads exactly ONE line & calls fork_and_execv(string). After this, it sends itself SIGSTOP again.
+
+7) fork_and_execv() calls split_args(string) to get a vector of command & args.
+
+8) fork_and_execv() creates a new process & calls execv.
+
+
+===============Files & Sub-directories for Question 2=================
+
+--Files:
+	
+	soln.cpp 
+	--The main program, source.
+	
+	testprog.cpp/testprog 
+	--Source/Executable for the test program. Used by Input files in SampleInput1/
+	--Outputs args separated by space. For instance, ./testprog 10 2 prints "OP: 10 2" to stdout
+	
+	makefile
+	--makefile
+	
+	test.sh
+	--Script with make & execution with some user input.
+	--Usage ./test.sh(needs +x)
+	
+--Sub-directories
+	
+	SampleInput1/
+	--Contains 0.txt, 1.txt ... 6.txt
+	--Each file has 5 lines with the format:
+		./testprog <file_number> <line_number>
+	--Makes it easy to check which line of which file got executed in which order.
+	--Setpath also included in one file. Uses SampleSetpathProg/ as the path.
+	
+	SampleInput2/
+	--Contains 0.txt, 1.txt ... 6.txt
+	--Each file has either /bin/echo/ <file_number> <line_number> OR setpath /bin/ followed by echo <file_number> <line_number>
+	
+	SampleSetpathprog/
+	--Directory with source & executable for the modified testprogsp.
+	--./testprogsp x y prints "OP from SampleSetpathProg/ : x y" to stdout
